@@ -1,5 +1,7 @@
 package web.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import web.model.User;
 import web.service.UserService;
@@ -34,8 +36,25 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String findAll(Model model){
+
         List<User> users = userService.findAll();
         model.addAttribute("users", users);
+
+        //get username for information
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            String username = ((UserDetails)principal).getUsername();
+            System.out.println("Name user is: " + username);
+        } else {
+            String username = principal.toString();
+            System.out.println("Condition else - Name user is: " + username);
+        }
+        //end test get username
+
+        //try loadUserByUsername
+        //System.out.println(userService.loadUserByUsername("admin").getRoles());
+
+
         return "user-list";
     }
 
@@ -54,7 +73,7 @@ public class AdminController {
             userService.saveUser(userService.addRoleToUser(user, userService.getRoleByRolename("ROLE_USER")));
         }
 
-        userService.saveUser(user);
+        //userService.saveUser(user);
         return "redirect:/admin";
     }
 
@@ -72,8 +91,15 @@ public class AdminController {
     }
 
     @PostMapping("/user-update")
-    public String updateUser(User user){
-        userService.saveUser(user);
+    public String updateUser(User user,
+                             @RequestParam(required = false, name = "roleAdmin") String roleAdmin){
+        if (roleAdmin != null) {
+            userService.saveUser(userService.addRoleToUser(user, userService.getRoleByRolename("ROLE_ADMIN")));
+        } else {
+            userService.saveUser(userService.addRoleToUser(user, userService.getRoleByRolename("ROLE_USER")));
+        }
+
+        //userService.saveUser(user);
         return "redirect:/admin";
     }
 }

@@ -13,12 +13,13 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService  {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -46,16 +47,16 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-
-//        TypedQuery<User> query = entityManager.createQuery("From User where username=:username", User.class);
+//    @Override
+//    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+//
+//        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.username=:username", User.class);
 //        query.setParameter("username", username);
 //        return query.getResultList().stream().findAny().orElse(null);
-
-        return userRepository.findByUsername(username);
-
-    }
+//
+//        //return userRepository.findByUsername(username);
+//
+//    }
 
 //    public String getRoleByRolename(String rolename) {
 //        return rolename;
@@ -68,13 +69,13 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-
     public Role getRoleByRolename(String rolename) {
+
         return entityManager.createQuery("select r from Role r where r.rolename = :username", Role.class)
                 .setParameter("username", rolename)
                 .getSingleResult();
-    }
 
+    }
 
 
 

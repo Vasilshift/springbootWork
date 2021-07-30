@@ -1,13 +1,15 @@
 package web.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import javax.persistence.*;
-import java.util.Collection;
+import java.security.Permission;
+import java.util.*;
 
 @Entity
 @Table(name = "roles")
 public class Role {
-
-    public Role(){}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +28,10 @@ public class Role {
         //this.users = users;
     }
 
+    public Role() {
+
+    }
+
     public Long getId() {
         return id;
     }
@@ -41,6 +47,15 @@ public class Role {
     public void setRolename(String rolename) {
         this.rolename = rolename;
     }
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        final List<SimpleGrantedAuthority> authorities = new LinkedList<>();
+
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+
+
 
 //    public Collection<User> getUsers() {
 //        return users;
