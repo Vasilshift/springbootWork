@@ -21,10 +21,10 @@ public class UserController {
         this.userService = userService;
     }
 
-//    @GetMapping("/user")
-//    public String userPage(Model model, Principal principal) {
-//        User user = userService.loadUserByUsername(principal.getName());
-//        model.addAttribute("user", user);
-//        return "user";
-//    }
+    @GetMapping("/user")
+    public String userPage(Model model, Principal principal) {
+        User user = userService.loadUserByUsername(principal.getName());
+        model.addAttribute("user", user);
+        return "user";
+    }
 }

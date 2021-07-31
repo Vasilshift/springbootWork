@@ -47,20 +47,17 @@ public class UserService  {
         userRepository.deleteById(id);
     }
 
-//    @Override
-//    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-//
-//        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.username=:username", User.class);
-//        query.setParameter("username", username);
-//        return query.getResultList().stream().findAny().orElse(null);
-//
-//        //return userRepository.findByUsername(username);
-//
-//    }
+    //@Override
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
 
-//    public String getRoleByRolename(String rolename) {
-//        return rolename;
-//    }
+        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.username=:username", User.class);
+        query.setParameter("username", username);
+        return query.getResultList().stream().findAny().orElse(null);
+
+        //return userRepository.findByUsername(username);
+
+    }
+
 
     public User addRoleToUser(User user, Role role) {
         Set<Role> roles = new HashSet<>();
