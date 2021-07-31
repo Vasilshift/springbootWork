@@ -7,7 +7,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import web.service.UserService;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.Collection;
 
 @Entity
 @Table(name = "users")
@@ -26,10 +28,10 @@ public class User implements UserDetails {
     private String password;
 
     //@Column(name = "roles")
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "users_roles",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     public User(Long id, String username, String password, Set<Role> roles) {
@@ -73,9 +75,10 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
 
+        return roles;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {

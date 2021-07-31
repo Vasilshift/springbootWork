@@ -9,22 +9,22 @@ import java.util.*;
 
 @Entity
 @Table(name = "roles")
-public class Role {
+public class Role implements GrantedAuthority{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "role")
-    private String rolename;
+    private String role;
 
 //    @Transient
 //    @ManyToMany(mappedBy = "roles")
 //    private Collection<User> users;
 
-    public Role(Long id, String rolename) {
+    public Role(Long id, String role) {
         this.id = id;
-        this.rolename = rolename;
+        this.role = role;
         //this.users = users;
     }
 
@@ -40,19 +40,24 @@ public class Role {
         this.id = id;
     }
 
-    public String getRolename() {
-        return rolename;
+    public String getRole() {
+        return role;
     }
 
-    public void setRolename(String rolename) {
-        this.rolename = rolename;
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        final List<SimpleGrantedAuthority> authorities = new LinkedList<>();
-
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+    @Override
+    public String getAuthority() {
+        return role;
     }
+
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        final List<SimpleGrantedAuthority> authorities = new LinkedList<>();
+//
+//        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+//    }
 
 
 

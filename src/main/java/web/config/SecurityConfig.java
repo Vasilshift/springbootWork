@@ -24,28 +24,51 @@ import web.config.handler.LoginSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
 
     @Autowired
-    public SecurityConfig(@Qualifier("myUserDetailsService") UserDetailsService userDetailsService) {
+    public SecurityConfig(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
+
+//    @Autowired
+//    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(userDetailsService)
+//                .passwordEncoder(passwordEncoder());
+//    }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        //var my workable
+        http.formLogin()
+                .successHandler(new LoginSuccessHandler())
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll();
+
         http
-                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/admin/").hasRole("ADMIN")
-                .antMatchers("/user/").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/").permitAll()
-                .and().formLogin()
-                .successHandler(new LoginSuccessHandler());
+                .antMatchers("/admin").access("hasAnyRole('ADMIN')")
+                .antMatchers("/user").access("hasAnyRole('USER','ADMIN')");
+
+        http.logout()
+                .permitAll()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login");
+
+        //var my workable
+//        http
+//                .csrf().disable().successHandler(new LoginSuccessHandler())
+//                .authorizeRequests()
+//                .antMatchers("/admin/").hasRole("ADMIN")
+//                .antMatchers("/user/").hasAnyRole("ADMIN", "USER")
+//                .antMatchers("/").permitAll()
+//                .and().formLogin();
+
 
         //variant from spring.io
 //        http
@@ -125,10 +148,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //    }
 
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(userDetailsService);
         //auth.authenticationProvider(daoAuthenticationProvider());
+//    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
     }
 
 

@@ -1,19 +1,15 @@
 package web.service;
 
-import org.hibernate.Session;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.transaction.annotation.Transactional;
 import web.model.Role;
 import web.model.User;
+import web.repository.RoleRepository;
 import web.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,14 +17,16 @@ import java.util.Set;
 @Service
 public class UserService  {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+//    @PersistenceContext
+//    private EntityManager entityManager;
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public User findById(Long id){
@@ -50,11 +48,13 @@ public class UserService  {
     //@Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.username=:username", User.class);
-        query.setParameter("username", username);
-        return query.getResultList().stream().findAny().orElse(null);
+//        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.username=:username", User.class);
+//        query.setParameter("username", username);
+//        return query.getResultList().stream().findAny().orElse(null);
 
-        //return userRepository.findByUsername(username);
+
+
+        return userRepository.findByUsername(username);
 
     }
 
@@ -68,9 +68,13 @@ public class UserService  {
 
     public Role getRoleByRolename(String rolename) {
 
-        return entityManager.createQuery("select r from Role r where r.rolename = :username", Role.class)
-                .setParameter("username", rolename)
-                .getSingleResult();
+//        return entityManager.createQuery("select r from Role r where r.rolename = :username", Role.class)
+//                .setParameter("username", rolename)
+//                .getSingleResult();
+
+        return roleRepository.findByRole(rolename);
+
+
 
     }
 

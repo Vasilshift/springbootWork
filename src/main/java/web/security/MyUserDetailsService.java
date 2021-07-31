@@ -1,29 +1,26 @@
 package web.security;
 
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import web.model.User;
 import web.repository.UserRepository;
+import web.service.UserService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
-@Service("myUserDetailsService")
+@Service   //("myUserDetailsService")
 public class MyUserDetailsService implements UserDetailsService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public MyUserDetailsService(UserRepository userRepository) {
+    public MyUserDetailsService(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
 //    @Override
@@ -37,12 +34,16 @@ public class MyUserDetailsService implements UserDetailsService {
 //
 //    }
 
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        User user = userRepository.findByUsername(username).orElseThrow(() ->
+//                new UsernameNotFoundException("User doesn't exists"));
+//        return MySecurityUser.transferUserToUserDetails(user);
+//    }
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("User doesn't exists"));
-        return MySecurityUser.transferUserToUserDetails(user);
+        return userService.loadUserByUsername(username);
     }
-
-
 }
